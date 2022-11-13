@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Secure WireGuard server installer
-
+# Fork of other installer by hideri.co
 RED='\033[0;31m'
 ORANGE='\033[0;33m'
 NC='\033[0m'
@@ -65,6 +65,7 @@ function initialCheck() {
 
 function installQuestions() {
 	echo "Welcome to the WireGuard Manager!"
+	echo "Fork of other installer by hideri.co"
 	echo "I need to ask you a few questions before starting the setup."
 	echo "You can leave the default options and just press enter if you are ok with them."
 	echo ""
