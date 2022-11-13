@@ -430,7 +430,7 @@ function uninstallWg() {
 
 function manageMenu() {
 	echo "Welcome to Wireguard Manager!"
-    echo ""
+    echo "by hideri.co"
 	echo "It looks like WireGuard is already installed."
 	echo ""
 	echo "What do you want to do?"
