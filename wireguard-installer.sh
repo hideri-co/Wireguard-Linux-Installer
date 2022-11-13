@@ -42,22 +42,24 @@ function checkOS() {
 		OS="${ID}"
 	elif [[ -e /etc/oracle-release ]]; then
 		source /etc/os-release
-        if [[ ${VERSION_ID} -eq 8 ]]; then
-    		OS=oracle
-        else
-            echo "Your version of Oracle Linux (${VERSION_ID}) is not supported!"
-            echo "This script supports only version 8 and version 9 is under development."
-            exit 1
-        fi
+        case $VERSION_ID in 
+        	8*) OS=oracle ;;
+        	*)
+	        	echo "Your version of Oracle Linux (${VERSION_ID}) is not supported!"
+	            echo "This script supports only version 8. Version 9 support is under development."
+	            exit 1
+            	;;
+        esac
 	elif [[ -e /etc/rocky-release ]]; then
 		source /etc/os-release
-        if [[ ${VERSION_ID} -eq 8 ]]; then
-            OS=oracle
-        else
-            echo "Your version of Oracle Linux (${VERSION_ID}) is not supported!"
-            echo "This script supports only version 8 and version 9 is under development."
-            exit 1
-        fi
+		case $VERSION_ID in 
+        	8*) OS=rocky ;;
+        	*)
+	        	echo "Your version of Rocky Linux (${VERSION_ID}) is not supported!"
+	            echo "This script supports only version 8. Version 9 support is under development."
+	            exit 1
+            	;;
+        esac
 	elif [[ -e /etc/arch-release ]]; then
 		OS=arch
 	else
@@ -152,19 +154,25 @@ function installWireGuard() {
 		fi
 		dnf install -y wireguard-tools iptables qrencode
 	elif [[ ${OS} == 'rocky' ]]; then
-        if [[ ${VERSION_ID} -eq 8 ]]; then
-    		dnf -y install epel-release elrepo-release
-    		dnf -y install wireguard-tools iptables qrencode;
-    		dnf -y install kmod-wireguard --nobest;
-        fi
+        case $VERSION_ID in 
+        	8*)
+	    		dnf -y install epel-release elrepo-release
+	    		dnf -y install wireguard-tools iptables qrencode;
+	    		dnf -y install kmod-wireguard --nobest;
+	    		;;
+        	*) exit 1 ;;
+		esac
 	elif [[ ${OS} == 'oracle' ]]; then
-        if [[ ${VERSION_ID} -eq 8 ]]; then
-    		dnf install -y oraclelinux-developer-release-el8
-    		dnf config-manager --disable -y ol8_developer
-    		dnf config-manager --enable -y ol8_developer_UEKR6
-    		dnf config-manager --save -y --setopt=ol8_developer_UEKR6.includepkgs='wireguard-tools*'
-    		dnf install -y wireguard-tools qrencode iptables
-        fi
+        case $VERSION_ID in 
+        	8*)
+	    		dnf install -y oraclelinux-developer-release-el8
+	    		dnf config-manager --disable -y ol8_developer
+	    		dnf config-manager --enable -y ol8_developer_UEKR6
+	    		dnf config-manager --save -y --setopt=ol8_developer_UEKR6.includepkgs='wireguard-tools*'
+	    		dnf install -y wireguard-tools qrencode iptables
+	    		;;
+        	*) exit 1 ;;
+		esac
 	elif [[ ${OS} == 'arch' ]]; then
 		pacman -S --needed --noconfirm wireguard-tools qrencode
 	fi
