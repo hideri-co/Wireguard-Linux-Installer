@@ -44,6 +44,7 @@ function checkOS() {
 		source /etc/os-release
         case $VERSION_ID in 
         	8*) OS=oracle ;;
+			9*) OS=oracle ;;
         	*)
 	        	echo "Your version of Oracle Linux (${VERSION_ID}) is not supported!"
 	            echo "This script supports only version 8. Version 9 support is under development."
@@ -165,10 +166,19 @@ function installWireGuard() {
 	elif [[ ${OS} == 'oracle' ]]; then
         case $VERSION_ID in 
         	8*)
+				dnf install -y epel-release;
 	    		dnf install -y oraclelinux-developer-release-el8
 	    		dnf config-manager --disable -y ol8_developer
 	    		dnf config-manager --enable -y ol8_developer_UEKR6
 	    		dnf config-manager --save -y --setopt=ol8_developer_UEKR6.includepkgs='wireguard-tools*'
+	    		dnf install -y wireguard-tools qrencode iptables
+	    		;;
+	    	9*)
+				dnf install -y epel-release;
+				dnf install -y oraclelinux-developer-release-el9
+	    		dnf config-manager --disable -y ol9_developer
+	    		dnf config-manager --enable -y ol9_developer_UEKR7
+	    		dnf config-manager --save -y --setopt=ol9_developer_UEKR7.includepkgs='wireguard-tools*'
 	    		dnf install -y wireguard-tools qrencode iptables
 	    		;;
         	*) exit 1 ;;
