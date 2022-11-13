@@ -20,11 +20,7 @@ function checkVirt() {
 	fi
 
 	if [ "$(systemd-detect-virt)" == "lxc" ]; then
-		echo "LXC is not supported (yet)."
-		echo "WireGuard can technically run in an LXC container,"
-		echo "but the kernel module has to be installed on the host,"
-		echo "the container has to be run with some specific parameters"
-		echo "and only the tools need to be installed in the container."
+		echo "LXC is not supported"
 		exit 1
 	fi
 }
@@ -46,9 +42,22 @@ function checkOS() {
 		OS="${ID}"
 	elif [[ -e /etc/oracle-release ]]; then
 		source /etc/os-release
-		OS=oracle
+        if [[ ${VERSION_ID} -eq 8.* ]]; then
+    		OS=oracle
+        else
+            echo "Your version of Oracle Linux (${VERSION_ID}) is not supported!"
+            echo "This script supports only version 8 and version 9 is under development."
+            exit 1
+        fi
 	elif [[ -e /etc/rocky-release ]]; then
-		OS=rocky
+		source /etc/os-release
+        if [[ ${VERSION_ID} -eq 8.* ]]; then
+            OS=oracle
+        else
+            echo "Your version of Oracle Linux (${VERSION_ID}) is not supported!"
+            echo "This script supports only version 8 and version 9 is under development."
+            exit 1
+        fi
 	elif [[ -e /etc/arch-release ]]; then
 		OS=arch
 	else
@@ -64,7 +73,7 @@ function initialCheck() {
 }
 
 function installQuestions() {
-	echo "Welcome to the WireGuard Manager!"
+	echo "Welcome to the WireGuard installer!"
 	echo "Fork of other installer by hideri.co"
 	echo "I need to ask you a few questions before starting the setup."
 	echo "You can leave the default options and just press enter if you are ok with them."
@@ -143,15 +152,19 @@ function installWireGuard() {
 		fi
 		dnf install -y wireguard-tools iptables qrencode
 	elif [[ ${OS} == 'rocky' ]]; then
-		dnf -y install epel-release elrepo-release
-		dnf -y install wireguard-tools iptables qrencode;
-		dnf -y install kmod-wireguard --nobest;
+        if [[ ${VERSION_ID} -eq 8.* ]]; then
+    		dnf -y install epel-release elrepo-release
+    		dnf -y install wireguard-tools iptables qrencode;
+    		dnf -y install kmod-wireguard --nobest;
+        fi
 	elif [[ ${OS} == 'oracle' ]]; then
-		dnf install -y oraclelinux-developer-release-el8
-		dnf config-manager --disable -y ol8_developer
-		dnf config-manager --enable -y ol8_developer_UEKR6
-		dnf config-manager --save -y --setopt=ol8_developer_UEKR6.includepkgs='wireguard-tools*'
-		dnf install -y wireguard-tools qrencode iptables
+        if [[ ${VERSION_ID} -eq 8.* ]]; then
+    		dnf install -y oraclelinux-developer-release-el8
+    		dnf config-manager --disable -y ol8_developer
+    		dnf config-manager --enable -y ol8_developer_UEKR6
+    		dnf config-manager --save -y --setopt=ol8_developer_UEKR6.includepkgs='wireguard-tools*'
+    		dnf install -y wireguard-tools qrencode iptables
+        fi
 	elif [[ ${OS} == 'arch' ]]; then
 		pacman -S --needed --noconfirm wireguard-tools qrencode
 	fi
@@ -408,9 +421,8 @@ function uninstallWg() {
 }
 
 function manageMenu() {
-	echo "Welcome to WireGuard-install!"
-	echo "The git repository is available at: https://github.com/angristan/wireguard-install"
-	echo ""
+	echo "Welcome to Wireguard Manager!"
+    echo ""
 	echo "It looks like WireGuard is already installed."
 	echo ""
 	echo "What do you want to do?"
