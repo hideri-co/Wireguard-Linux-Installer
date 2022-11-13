@@ -42,7 +42,7 @@ function checkOS() {
 		OS="${ID}"
 	elif [[ -e /etc/oracle-release ]]; then
 		source /etc/os-release
-        if [[ ${VERSION_ID} -eq 8.* ]]; then
+        if [[ ${VERSION_ID} -eq 8 ]]; then
     		OS=oracle
         else
             echo "Your version of Oracle Linux (${VERSION_ID}) is not supported!"
@@ -51,7 +51,7 @@ function checkOS() {
         fi
 	elif [[ -e /etc/rocky-release ]]; then
 		source /etc/os-release
-        if [[ ${VERSION_ID} -eq 8.* ]]; then
+        if [[ ${VERSION_ID} -eq 8 ]]; then
             OS=oracle
         else
             echo "Your version of Oracle Linux (${VERSION_ID}) is not supported!"
@@ -152,13 +152,13 @@ function installWireGuard() {
 		fi
 		dnf install -y wireguard-tools iptables qrencode
 	elif [[ ${OS} == 'rocky' ]]; then
-        if [[ ${VERSION_ID} -eq 8.* ]]; then
+        if [[ ${VERSION_ID} -eq 8 ]]; then
     		dnf -y install epel-release elrepo-release
     		dnf -y install wireguard-tools iptables qrencode;
     		dnf -y install kmod-wireguard --nobest;
         fi
 	elif [[ ${OS} == 'oracle' ]]; then
-        if [[ ${VERSION_ID} -eq 8.* ]]; then
+        if [[ ${VERSION_ID} -eq 8 ]]; then
     		dnf install -y oraclelinux-developer-release-el8
     		dnf config-manager --disable -y ol8_developer
     		dnf config-manager --enable -y ol8_developer_UEKR6
