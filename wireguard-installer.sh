@@ -54,9 +54,10 @@ function checkOS() {
 		source /etc/os-release
 		case $VERSION_ID in 
         	8*) OS=rocky ;;
+			9*) OS=rocky ;;
         	*)
 	        	echo "Your version of Rocky Linux (${VERSION_ID}) is not supported!"
-	            echo "This script supports only version 8. Version 9 support is under development."
+	            echo "This script supports only version 8.*"
 	            exit 1
             	;;
         esac
@@ -113,12 +114,12 @@ function installQuestions() {
 		read -rp "Server's WireGuard port [1-65535]: " -e -i "${RANDOM_PORT}" SERVER_PORT
 	done
 
-	# Adguard DNS by default
+	# OpenDNS DNS by default
 	until [[ ${CLIENT_DNS_1} =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]; do
-		read -rp "First DNS resolver to use for the clients: " -e -i 94.140.14.14 CLIENT_DNS_1
+		read -rp "First DNS resolver to use for the clients: " -e -i 208.67.222.222 CLIENT_DNS_1
 	done
 	until [[ ${CLIENT_DNS_2} =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]; do
-		read -rp "Second DNS resolver to use for the clients (optional): " -e -i 94.140.15.15 CLIENT_DNS_2
+		read -rp "Second DNS resolver to use for the clients (optional): " -e -i 208.67.220.220 CLIENT_DNS_2
 		if [[ ${CLIENT_DNS_2} == "" ]]; then
 			CLIENT_DNS_2="${CLIENT_DNS_1}"
 		fi
@@ -156,9 +157,13 @@ function installWireGuard() {
 	elif [[ ${OS} == 'rocky' ]]; then
         case $VERSION_ID in 
         	8*)
-	    		dnf -y install epel-release elrepo-release
+	    		dnf -y install epel-release elrepo-release;
 	    		dnf -y install wireguard-tools iptables qrencode;
-	    		dnf -y install kmod-wireguard --nobest;
+	    		dnf -y install kmod-wireguard --nobest; # temporary fix to install kmod-wireguard 6.1.0
+	    		;;
+	    	9*)
+				dnf -y install epel-release elrepo-release;
+	    		dnf -y install wireguard-tools iptables qrencode;
 	    		;;
         	*) exit 1 ;;
 		esac
@@ -407,7 +412,8 @@ function uninstallWg() {
 			fi
 			dnf autoremove -y
 		elif [[ ${OS} == 'rocky' ]]; then
-			dnf -y autoremove kmod-wireguard wireguard-tools qrencode
+			dnf -y autoremove wireguard-tools qrencode
+			dnf -y autoremove kmod-wireguard
 		elif [[ ${OS} == 'oracle' ]]; then
 			dnf -y autoremove wireguard-tools qrencode
 		elif [[ ${OS} == 'arch' ]]; then
