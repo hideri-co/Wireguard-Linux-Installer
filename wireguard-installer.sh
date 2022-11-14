@@ -57,7 +57,6 @@ function checkOS() {
 			9*) OS=rocky ;;
         	*)
 	        	echo "Your version of Rocky Linux (${VERSION_ID}) is not supported!"
-	            echo "This script supports only version 8.*"
 	            exit 1
             	;;
         esac
