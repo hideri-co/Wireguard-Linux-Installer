@@ -46,8 +46,7 @@ function checkOS() {
         	8*) OS=oracle ;;
 			9*) OS=oracle ;;
         	*)
-	        	echo "Your version of Oracle Linux (${VERSION_ID}) is not supported!"
-	            echo "This script supports only version 8. Version 9 support is under development."
+	        	echo "Your version of Oracle Linux (${VERSION_ID}) is not supported!
 	            exit 1
             	;;
         esac
