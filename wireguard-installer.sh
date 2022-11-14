@@ -413,7 +413,7 @@ function uninstallWg() {
 			dnf autoremove -y
 		elif [[ ${OS} == 'rocky' ]]; then
 			dnf -y autoremove wireguard-tools qrencode
-			dnf -y autoremove kmod-wireguard
+			dnf -y autoremove kmod-wireguard # will skip if Rocky Linux 9
 		elif [[ ${OS} == 'oracle' ]]; then
 			dnf -y autoremove wireguard-tools qrencode
 		elif [[ ${OS} == 'arch' ]]; then
@@ -446,6 +446,7 @@ function uninstallWg() {
 function manageMenu() {
 	echo "Welcome to Wireguard Manager!"
     echo "by hideri.co"
+    echo ""
 	echo "It looks like WireGuard is already installed."
 	echo ""
 	echo "What do you want to do?"
