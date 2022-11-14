@@ -164,6 +164,7 @@ function installWireGuard() {
 	    	9*)
 				dnf -y install epel-release elrepo-release;
 	    		dnf -y install wireguard-tools iptables qrencode;
+			# there is no kmod-wireguard in elrepo for now
 	    		;;
         	*) exit 1 ;;
 		esac
