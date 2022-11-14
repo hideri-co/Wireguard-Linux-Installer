@@ -5,5 +5,5 @@ Supported Linux distros are
 - Debian 10 and newer
 - Fedora
 - Oracle Linux 8.*, 9.* with UEK (RHEL kernel is untested)
-- Rocky Linux 8.*
+- Rocky Linux 8.*, 9.*
 - Arch Linux
